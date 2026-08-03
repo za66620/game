@@ -49,3 +49,23 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 36
 horizontal_alignment = 1
 text = ""
+
+[node name="ControlsPanel" type="ColorRect" parent="HUD"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 92.0
+grow_horizontal = 0
+color = Color(0.03, 0.06, 0.12, 0.72)
+mouse_filter = 2
+
+[node name="ControlsLabel" type="Label" parent="HUD/ControlsPanel"]
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 280.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "A/D or ←/→  移动    Space/W  跳跃（二段）\nShift  冲刺    J  攻击    S/↓ 空中下砸\n踩踏敌人、收集金币并抵达旗帜"

@@ -1,26 +1,44 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/knight_walk.png" id="2_knight"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
 size = Vector2(30, 44)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_knight_0"]
+atlas = ExtResource("2_knight")
+region = Rect2(0, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_knight_1"]
+atlas = ExtResource("2_knight")
+region = Rect2(543, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_knight_2"]
+atlas = ExtResource("2_knight")
+region = Rect2(1086, 0, 543, 724)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_knight_3"]
+atlas = ExtResource("2_knight")
+region = Rect2(1629, 0, 543, 724)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_knight"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_knight_0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_3")}],
+"loop": true,
+"name": &"walk",
+"speed": 9.0
+}]
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1")
 
-[node name="BodyColor" type="ColorRect" parent="."]
-offset_left = -15.0
-offset_top = -22.0
-offset_right = 15.0
-offset_bottom = 22.0
-color = Color(0.2, 0.6, 1, 1)
-
-[node name="Eye" type="ColorRect" parent="."]
-offset_left = 2.0
-offset_top = -12.0
-offset_right = 10.0
-offset_bottom = -4.0
-color = Color(1, 1, 1, 1)
+[node name="KnightSprite" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_knight")
+animation = &"walk"
+frame = 0
+scale = Vector2(0.11, 0.11)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_player")

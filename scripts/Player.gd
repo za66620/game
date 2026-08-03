@@ -32,6 +32,12 @@ var wall_dir := 0
 var teleport_lock := 0.0
 var shoot_cooldown_left := 0.0
 
+@onready var knight_sprite: AnimatedSprite2D = $KnightSprite
+
+func _ready() -> void:
+	knight_sprite.pause()
+	_update_visuals()
+
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
@@ -64,6 +70,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity = Vector2(facing * DASH_SPEED, 0.0)
 			move_and_slide()
+			_update_visuals()
 			return
 
 	if not is_on_floor():
@@ -111,6 +118,28 @@ func _physics_process(delta: float) -> void:
 		AudioManager.play("stomp")
 
 	_check_collisions()
+	_update_visuals()
+
+func _update_visuals() -> void:
+	# The supplied knight faces forward. Mirroring gives clear left/right travel
+	# while its four poses provide a continuous walking cycle.
+	knight_sprite.flip_h = facing < 0
+	if dead:
+		knight_sprite.pause()
+		knight_sprite.frame = 0
+		return
+	if is_dashing:
+		knight_sprite.play(&"walk")
+		knight_sprite.speed_scale = 2.4
+	elif not is_on_floor():
+		knight_sprite.pause()
+		knight_sprite.frame = 2 if velocity.y < 0.0 else 3
+	elif absf(velocity.x) > 1.0:
+		knight_sprite.play(&"walk")
+		knight_sprite.speed_scale = 1.0
+	else:
+		knight_sprite.pause()
+		knight_sprite.frame = 0
 
 func _check_collisions() -> void:
 	if is_dashing:
@@ -170,4 +199,5 @@ func _die() -> void:
 	is_pounding = false
 	is_dashing = false
 	wall_dir = 0
+	_update_visuals()
 	died.emit()
