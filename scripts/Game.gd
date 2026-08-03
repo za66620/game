@@ -54,8 +54,7 @@ func _load_level(index: int) -> void:
 		checkpoint.activated.connect(_on_checkpoint_activated)
 
 	player.global_position = LEVEL_STARTS[index]
-	player.velocity = Vector2.ZERO
-	player.dead = false
+	player.reset_for_spawn()
 	player.set_process(true)
 	player.set_physics_process(true)
 
@@ -93,8 +92,7 @@ func _on_player_died() -> void:
 	else:
 		if has_checkpoint:
 			player.global_position = checkpoint_pos
-			player.velocity = Vector2.ZERO
-			player.dead = false
+			player.reset_for_spawn()
 			player.set_process(true)
 			player.set_physics_process(true)
 		else:

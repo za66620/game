@@ -4,7 +4,7 @@ func _ready() -> void:
 	_ensure_action("jump", [KEY_SPACE, KEY_W, KEY_UP])
 	_ensure_action("left", [KEY_A, KEY_LEFT])
 	_ensure_action("right", [KEY_D, KEY_RIGHT])
-	_ensure_action("dash", [KEY_SHIFT])
+	_ensure_action("dash", [KEY_L])
 	_ensure_action("down", [KEY_S, KEY_DOWN])
 	_ensure_action("attack", [KEY_J])
 	_ensure_action("restart", [KEY_R])
