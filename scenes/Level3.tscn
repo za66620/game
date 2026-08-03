@@ -1,0 +1,335 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/Coin.tscn" id="1_coin"]
+[ext_resource type="PackedScene" path="res://scenes/Goal.tscn" id="2_goal"]
+[ext_resource type="PackedScene" path="res://scenes/Spike.tscn" id="3_spike"]
+[ext_resource type="PackedScene" path="res://scenes/Enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/FlyingEnemy.tscn" id="5_fly"]
+[ext_resource type="PackedScene" path="res://scenes/ShootingEnemy.tscn" id="6_shoot"]
+[ext_resource type="PackedScene" path="res://scenes/HeavyEnemy.tscn" id="7_heavy"]
+[ext_resource type="PackedScene" path="res://scenes/BreakableBlock.tscn" id="8_block"]
+[ext_resource type="PackedScene" path="res://scenes/Teleporter.tscn" id="9_tp"]
+[ext_resource type="PackedScene" path="res://scenes/Checkpoint.tscn" id="10_check"]
+
+[sub_resource type="RectangleShape2D" id="rect_ground"]
+size = Vector2(3400, 40)
+
+[sub_resource type="RectangleShape2D" id="rect_wall"]
+size = Vector2(40, 1000)
+
+[sub_resource type="RectangleShape2D" id="rect_plat"]
+size = Vector2(200, 24)
+
+[sub_resource type="RectangleShape2D" id="rect_pillar"]
+size = Vector2(30, 80)
+
+[sub_resource type="RectangleShape2D" id="rect_wallhigh"]
+size = Vector2(40, 540)
+
+[node name="Level3" type="Node2D"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(0, 620)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("rect_ground")
+
+[node name="GroundColor" type="ColorRect" parent="Ground"]
+offset_left = -1700.0
+offset_top = -20.0
+offset_right = 1700.0
+offset_bottom = 20.0
+color = Color(0.42, 0.36, 0.3, 1)
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-1700, 620)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("rect_wall")
+
+[node name="WallColor" type="ColorRect" parent="WallLeft"]
+offset_left = -20.0
+offset_top = -500.0
+offset_right = 20.0
+offset_bottom = 500.0
+color = Color(0.5, 0.45, 0.38, 1)
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(1700, 620)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("rect_wall")
+
+[node name="WallColor" type="ColorRect" parent="WallRight"]
+offset_left = -20.0
+offset_top = -500.0
+offset_right = 20.0
+offset_bottom = 500.0
+color = Color(0.5, 0.45, 0.38, 1)
+
+[node name="PlatformP1" type="StaticBody2D" parent="."]
+position = Vector2(-1200, 450)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP1"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP1"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP2" type="StaticBody2D" parent="."]
+position = Vector2(-900, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP2"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP2"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP3" type="StaticBody2D" parent="."]
+position = Vector2(-600, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP3"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP3"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP3b" type="StaticBody2D" parent="."]
+position = Vector2(-200, 300)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP3b"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP3b"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP4" type="StaticBody2D" parent="."]
+position = Vector2(100, 200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP4"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP4"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP4b" type="StaticBody2D" parent="."]
+position = Vector2(400, 300)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP4b"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP4b"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP5" type="StaticBody2D" parent="."]
+position = Vector2(600, 350)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP5"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP5"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP5b" type="StaticBody2D" parent="."]
+position = Vector2(850, 380)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP5b"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP5b"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP6" type="StaticBody2D" parent="."]
+position = Vector2(1100, 480)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP6"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP6"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformPR" type="StaticBody2D" parent="."]
+position = Vector2(1450, 250)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformPR"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformPR"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="PlatformP7" type="StaticBody2D" parent="."]
+position = Vector2(1550, 330)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformP7"]
+shape = SubResource("rect_plat")
+
+[node name="PlatColor" type="ColorRect" parent="PlatformP7"]
+offset_left = -100.0
+offset_top = -12.0
+offset_right = 100.0
+offset_bottom = 12.0
+color = Color(0.62, 0.5, 0.4, 1)
+
+[node name="HighWall" type="StaticBody2D" parent="."]
+position = Vector2(1350, 560)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HighWall"]
+shape = SubResource("rect_wallhigh")
+
+[node name="WallColor" type="ColorRect" parent="HighWall"]
+offset_left = -20.0
+offset_top = -270.0
+offset_right = 20.0
+offset_bottom = 270.0
+color = Color(0.5, 0.42, 0.35, 1)
+
+[node name="Pillar1" type="StaticBody2D" parent="."]
+position = Vector2(700, 560)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pillar1"]
+shape = SubResource("rect_pillar")
+
+[node name="PillarColor" type="ColorRect" parent="Pillar1"]
+offset_left = -15.0
+offset_top = -40.0
+offset_right = 15.0
+offset_bottom = 40.0
+color = Color(0.55, 0.5, 0.45, 1)
+
+[node name="Pillar2" type="StaticBody2D" parent="."]
+position = Vector2(1000, 560)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pillar2"]
+shape = SubResource("rect_pillar")
+
+[node name="PillarColor" type="ColorRect" parent="Pillar2"]
+offset_left = -15.0
+offset_top = -40.0
+offset_right = 15.0
+offset_bottom = 40.0
+color = Color(0.55, 0.5, 0.45, 1)
+
+[node name="Breakable1" parent="." instance=ExtResource("8_block")]
+position = Vector2(-940, 173)
+
+[node name="Breakable2" parent="." instance=ExtResource("8_block")]
+position = Vector2(60, 173)
+
+[node name="Teleporter1" parent="." instance=ExtResource("9_tp")]
+position = Vector2(1280, 560)
+pair_id = 1
+
+[node name="Teleporter2" parent="." instance=ExtResource("9_tp")]
+position = Vector2(1410, 400)
+pair_id = 1
+
+[node name="Checkpoint1" parent="." instance=ExtResource("10_check")]
+position = Vector2(1450, 180)
+
+[node name="Coins" type="Node2D" parent="."]
+
+[node name="Coin1" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(-1200, 408)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(-900, 158)
+
+[node name="Coin3" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(-600, 278)
+
+[node name="Coin4" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(-200, 258)
+
+[node name="Coin5" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(100, 158)
+
+[node name="Coin6" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(400, 258)
+
+[node name="Coin7" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(600, 308)
+
+[node name="Coin8" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(850, 338)
+
+[node name="Coin9" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(1100, 438)
+
+[node name="Coin10" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(1300, 520)
+
+[node name="Coin11" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(-300, 560)
+
+[node name="Coin12" parent="Coins" instance=ExtResource("1_coin")]
+position = Vector2(1450, 208)
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Flying1" parent="Enemies" instance=ExtResource("5_fly")]
+position = Vector2(-700, 240)
+
+[node name="Flying2" parent="Enemies" instance=ExtResource("5_fly")]
+position = Vector2(350, 240)
+
+[node name="Shooting1" parent="Enemies" instance=ExtResource("6_shoot")]
+position = Vector2(-300, 586)
+patrol_range = 150.0
+
+[node name="Heavy1" parent="Enemies" instance=ExtResource("7_heavy")]
+position = Vector2(850, 586)
+patrol_range = 100.0
+
+[node name="Spikes" type="Node2D" parent="."]
+
+[node name="Spike1" parent="Spikes" instance=ExtResource("3_spike")]
+position = Vector2(-980, 584)
+
+[node name="Spike2" parent="Spikes" instance=ExtResource("3_spike")]
+position = Vector2(-940, 584)
+
+[node name="Spike3" parent="Spikes" instance=ExtResource("3_spike")]
+position = Vector2(-900, 584)
+
+[node name="Goal" parent="." instance=ExtResource("2_goal")]
+position = Vector2(1550, 275)

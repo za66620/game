@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="PolygonShape2D" id="PolygonShape2D_spike"]
+polygon = PackedVector2Array(-14, 14, 0, -14, 14, 14)
+
+[node name="Spike" type="StaticBody2D" groups=["spikes"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("PolygonShape2D_spike")
+
+[node name="SpikeColor" type="Polygon2D" parent="."]
+color = Color(0.9, 0.5, 0.1, 1)
+polygon = PackedVector2Array(-14, 14, 0, -14, 14, 14)

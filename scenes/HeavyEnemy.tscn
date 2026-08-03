@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/HeavyEnemy.gd" id="1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_heavy"]
+size = Vector2(36, 30)
+
+[node name="HeavyEnemy" type="CharacterBody2D"]
+script = ExtResource("1")
+
+[node name="HeavyColor" type="ColorRect" parent="."]
+offset_left = -18.0
+offset_top = -15.0
+offset_right = 18.0
+offset_bottom = 15.0
+color = Color(0.5, 0.3, 0.8, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_heavy")
