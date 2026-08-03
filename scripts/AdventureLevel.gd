@@ -51,7 +51,7 @@ func _build_background() -> void:
 	sky.color = [Color("#8ed7e8"), Color("#e0b27e"), Color("#657494")][level_id - 1]
 	backdrop.add_child(sky)
 
-	var region_x := [144.0, 96.0, 48.0][level_id - 1]
+	var region_x: float = [144.0, 96.0, 48.0][level_id - 1]
 	for i in range(-1, 6):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = BACKGROUND_SHEET
