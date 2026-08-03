@@ -18,7 +18,7 @@ var facing := -1
 var health := 5
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player")
-@onready var color_rect: ColorRect = $HeavyColor
+@onready var heavy_sprite: Sprite2D = $HeavySprite
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -30,6 +30,7 @@ func _physics_process(delta: float) -> void:
 	match state:
 		State.PATROL:
 			velocity.x = direction * PATROL_SPEED
+			heavy_sprite.flip_h = direction > 0
 			move_and_slide()
 			if global_position.x <= start_x - patrol_range:
 				direction = 1
@@ -38,17 +39,18 @@ func _physics_process(delta: float) -> void:
 			_try_charge()
 		State.CHARGE:
 			velocity.x = facing * CHARGE_SPEED
+			heavy_sprite.flip_h = facing > 0
 			move_and_slide()
 			if is_on_wall():
 				state = State.STUNNED
 				stun_timer = STUN_TIME
-				color_rect.color = Color(0.7, 0.7, 0.75)
+				heavy_sprite.modulate = Color(0.7, 0.7, 0.75)
 		State.STUNNED:
 			velocity.x = 0.0
 			stun_timer -= delta
 			if stun_timer <= 0.0:
 				state = State.PATROL
-				color_rect.color = Color(0.5, 0.3, 0.8)
+				heavy_sprite.modulate = Color.WHITE
 
 func _try_charge() -> void:
 	if not player or player.dead:
@@ -59,7 +61,7 @@ func _try_charge() -> void:
 		if facing == 0.0:
 			facing = 1.0
 		state = State.CHARGE
-		color_rect.color = Color(0.9, 0.2, 0.2)
+		heavy_sprite.modulate = Color(1.0, 0.45, 0.45)
 
 func stomp() -> void:
 	if state == State.STUNNED:

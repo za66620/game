@@ -1,33 +1,57 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/knight_walk.png" id="2_knight"]
+[ext_resource type="Texture2D" path="res://assets/knight_side_combat.png" id="2_knight"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
 size = Vector2(30, 44)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_knight_0"]
-atlas = ExtResource("2_knight")
-region = Rect2(0, 0, 543, 724)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(70, 38)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_knight_1"]
+[sub_resource type="AtlasTexture" id="Atlas_walk_0"]
 atlas = ExtResource("2_knight")
-region = Rect2(543, 0, 543, 724)
+region = Rect2(0, 0, 443, 443)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_knight_2"]
+[sub_resource type="AtlasTexture" id="Atlas_walk_1"]
 atlas = ExtResource("2_knight")
-region = Rect2(1086, 0, 543, 724)
+region = Rect2(443, 0, 444, 443)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_knight_3"]
+[sub_resource type="AtlasTexture" id="Atlas_walk_2"]
 atlas = ExtResource("2_knight")
-region = Rect2(1629, 0, 543, 724)
+region = Rect2(887, 0, 443, 443)
+
+[sub_resource type="AtlasTexture" id="Atlas_walk_3"]
+atlas = ExtResource("2_knight")
+region = Rect2(1330, 0, 444, 443)
+
+[sub_resource type="AtlasTexture" id="Atlas_slash_0"]
+atlas = ExtResource("2_knight")
+region = Rect2(0, 443, 443, 444)
+
+[sub_resource type="AtlasTexture" id="Atlas_slash_1"]
+atlas = ExtResource("2_knight")
+region = Rect2(443, 443, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Atlas_slash_2"]
+atlas = ExtResource("2_knight")
+region = Rect2(887, 443, 443, 444)
+
+[sub_resource type="AtlasTexture" id="Atlas_slash_3"]
+atlas = ExtResource("2_knight")
+region = Rect2(1330, 443, 444, 444)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_knight"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_knight_0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_knight_3")}],
+"frames": [{"duration": 1.0, "texture": SubResource("Atlas_walk_0")}, {"duration": 1.0, "texture": SubResource("Atlas_walk_1")}, {"duration": 1.0, "texture": SubResource("Atlas_walk_2")}, {"duration": 1.0, "texture": SubResource("Atlas_walk_3")}],
 "loop": true,
 "name": &"walk",
 "speed": 9.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Atlas_slash_0")}, {"duration": 1.0, "texture": SubResource("Atlas_slash_1")}, {"duration": 1.0, "texture": SubResource("Atlas_slash_2")}, {"duration": 1.0, "texture": SubResource("Atlas_slash_3")}],
+"loop": false,
+"name": &"slash",
+"speed": 12.0
 }]
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
@@ -38,10 +62,19 @@ texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_knight")
 animation = &"walk"
 frame = 0
-scale = Vector2(0.11, 0.11)
+scale = Vector2(0.15, 0.15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_player")
+
+[node name="AttackHitbox" type="Area2D" parent="."]
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
+position = Vector2(42, -2)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true

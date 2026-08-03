@@ -9,6 +9,8 @@ var direction := -1
 var start_x: float
 var dead := false
 
+@onready var enemy_sprite: Sprite2D = $EnemySprite
+
 func _ready() -> void:
 	add_to_group("enemies")
 	start_x = global_position.x
@@ -17,6 +19,7 @@ func _physics_process(_delta: float) -> void:
 	if dead:
 		return
 	velocity.x = direction * SPEED
+	enemy_sprite.flip_h = direction > 0
 	move_and_slide()
 	if global_position.x <= start_x - patrol_range:
 		direction = 1

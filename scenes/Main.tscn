@@ -68,4 +68,4 @@ offset_right = 280.0
 offset_bottom = 76.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
 theme_override_font_sizes/font_size = 16
-text = "A/D or ←/→  移动    Space/W  跳跃（二段）\nShift  冲刺    J  攻击    S/↓ 空中下砸\n踩踏敌人、收集金币并抵达旗帜"
+text = "A/D or ←/→  移动    Space/W  跳跃（二段）\nShift  冲刺    J  劈砍    S/↓ 空中下砸\n击败敌人、收集金币并抵达旗帜"

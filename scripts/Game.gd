@@ -6,9 +6,9 @@ const LEVELS: Array[String] = [
 	"res://scenes/Level3.tscn",
 ]
 const LEVEL_STARTS: Array[Vector2] = [
-	Vector2(-900, 500),
-	Vector2(-1200, 500),
-	Vector2(-1500, 500),
+	Vector2(-1020, 520),
+	Vector2(-1350, 520),
+	Vector2(-1570, 520),
 ]
 
 var current_level := 0

@@ -14,6 +14,7 @@ var dead := false
 var fire_timer := 1.0
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player")
+@onready var shooting_sprite: Sprite2D = $ShootingSprite
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -23,6 +24,7 @@ func _physics_process(delta: float) -> void:
 	if dead:
 		return
 	velocity.x = direction * SPEED
+	shooting_sprite.flip_h = direction > 0
 	move_and_slide()
 	if global_position.x <= start_x - patrol_range:
 		direction = 1
