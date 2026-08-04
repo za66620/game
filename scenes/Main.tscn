@@ -13,23 +13,62 @@ position = Vector2(-520, 500)
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="CoinsLabel" type="Label" parent="HUD"]
+[node name="PlayerStatus" type="ColorRect" parent="HUD"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 350.0
+offset_bottom = 112.0
+color = Color(0.025, 0.035, 0.055, 0.82)
+mouse_filter = 2
+
+[node name="HealthText" type="Label" parent="HUD/PlayerStatus"]
 offset_left = 12.0
 offset_top = 8.0
-offset_right = 400.0
-offset_bottom = 40.0
-theme_override_font_sizes/font_size = 24
-text = "生命: 3   金币: 0"
+offset_right = 72.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(0.96, 0.84, 0.78, 1)
+text = "生命"
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/PlayerStatus"]
+offset_left = 72.0
+offset_top = 9.0
+offset_right = 325.0
+offset_bottom = 29.0
+value = 100.0
+show_percentage = false
+
+[node name="StaminaText" type="Label" parent="HUD/PlayerStatus"]
+offset_left = 12.0
+offset_top = 38.0
+offset_right = 72.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.75, 0.95, 0.72, 1)
+text = "精力"
+
+[node name="StaminaBar" type="ProgressBar" parent="HUD/PlayerStatus"]
+offset_left = 72.0
+offset_top = 39.0
+offset_right = 325.0
+offset_bottom = 59.0
+value = 100.0
+show_percentage = false
+
+[node name="SoulsLabel" type="Label" parent="HUD/PlayerStatus"]
+offset_left = 12.0
+offset_top = 69.0
+offset_right = 325.0
+offset_bottom = 96.0
+theme_override_colors/font_color = Color(0.88, 0.86, 0.68, 1)
+theme_override_font_sizes/font_size = 18
+text = "灵魂：0"
 
 [node name="LevelLabel" type="Label" parent="HUD"]
 anchor_left = 0.5
-anchor_top = 0.0
 anchor_right = 0.5
-anchor_bottom = 0.0
 offset_left = -100.0
-offset_top = 8.0
+offset_top = 10.0
 offset_right = 100.0
-offset_bottom = 40.0
+offset_bottom = 42.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
@@ -40,32 +79,69 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -30.0
-offset_right = 300.0
-offset_bottom = 30.0
+offset_left = -390.0
+offset_top = -36.0
+offset_right = 390.0
+offset_bottom = 36.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.92, 0.8, 0.64, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 38
 horizontal_alignment = 1
 text = ""
+
+[node name="BossPanel" type="ColorRect" parent="HUD"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -310.0
+offset_top = -86.0
+offset_right = 310.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.025, 0.025, 0.035, 0.88)
+mouse_filter = 2
+
+[node name="BossName" type="Label" parent="HUD/BossPanel"]
+offset_left = 12.0
+offset_top = 4.0
+offset_right = 608.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(0.92, 0.77, 0.65, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "守门者"
+
+[node name="BossHealth" type="ProgressBar" parent="HUD/BossPanel"]
+offset_left = 18.0
+offset_top = 34.0
+offset_right = 602.0
+offset_bottom = 55.0
+value = 100.0
+show_percentage = false
 
 [node name="ControlsPanel" type="ColorRect" parent="HUD"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -300.0
+offset_left = -330.0
 offset_top = 10.0
 offset_right = -10.0
-offset_bottom = 92.0
+offset_bottom = 108.0
 grow_horizontal = 0
-color = Color(0.03, 0.06, 0.12, 0.72)
+color = Color(0.03, 0.06, 0.12, 0.76)
 mouse_filter = 2
 
 [node name="ControlsLabel" type="Label" parent="HUD/ControlsPanel"]
 offset_left = 10.0
-offset_top = 6.0
-offset_right = 280.0
-offset_bottom = 76.0
+offset_top = 7.0
+offset_right = 310.0
+offset_bottom = 92.0
 theme_override_colors/font_color = Color(0.86, 0.93, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "A/D or ←/→  移动    Space/W  跳跃\nL + ←/→  无敌冲刺    J  劈砍    ↓ 地面举盾\n空中按 ↓ 下砸；击败敌人并抵达旗帜"
+theme_override_font_sizes/font_size = 15
+text = "A/D 或 ←/→  移动    Space/W  跳跃\nJ  劈砍（消耗精力）    L+方向  无敌闪避\n↓/S  举盾；起手瞬间可弹反    R  重开"

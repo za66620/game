@@ -14,4 +14,6 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		active = true
 		$CheckpointColor.color = Color(0.2, 0.9, 0.3)
+		if body.has_method("heal_full"):
+			body.heal_full()
 		activated.emit(global_position + Vector2(0, -30))

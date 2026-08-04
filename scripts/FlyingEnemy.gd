@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 @export var bob_range := 60.0
 @export var bob_speed := 2.0
-@export var health := 2
+@export var health := 36
 
 var origin_y: float
 var time := 0.0

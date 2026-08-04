@@ -3,7 +3,7 @@ extends CharacterBody2D
 @export var patrol_range := 120.0
 @export var fire_interval := 2.5
 @export var detect_range := 300.0
-@export var health := 2
+@export var health := 44
 
 const SPEED := 60.0
 const BULLET_SPEED := 260.0

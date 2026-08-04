@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var patrol_range := 120.0
-@export var health := 2
+@export var health := 48
 
 const SPEED := 90.0
 
@@ -9,7 +9,7 @@ var direction := -1
 var start_x: float
 var dead := false
 
-@onready var enemy_sprite: Sprite2D = $EnemySprite
+@onready var enemy_sprite: AnimatedSprite2D = $EnemySprite
 
 func _ready() -> void:
 	add_to_group("enemies")

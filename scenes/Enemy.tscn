@@ -1,24 +1,63 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/Enemy.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/external/kenney_pixel-platformer/Tilemap/tilemap-characters_packed.png" id="2_characters"]
+[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/batedor_walk.png" id="2_monster"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
-size = Vector2(28, 24)
+size = Vector2(30, 34)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_enemy"]
-atlas = ExtResource("2_characters")
-region = Rect2(0, 48, 24, 24)
+[sub_resource type="AtlasTexture" id="Monster_0"]
+atlas = ExtResource("2_monster")
+region = Rect2(0, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_1"]
+atlas = ExtResource("2_monster")
+region = Rect2(320, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_2"]
+atlas = ExtResource("2_monster")
+region = Rect2(640, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_3"]
+atlas = ExtResource("2_monster")
+region = Rect2(960, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_4"]
+atlas = ExtResource("2_monster")
+region = Rect2(1280, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_5"]
+atlas = ExtResource("2_monster")
+region = Rect2(1600, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_6"]
+atlas = ExtResource("2_monster")
+region = Rect2(1920, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Monster_7"]
+atlas = ExtResource("2_monster")
+region = Rect2(2240, 0, 320, 320)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_monster"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Monster_0")}, {"duration": 1.0, "texture": SubResource("Monster_1")}, {"duration": 1.0, "texture": SubResource("Monster_2")}, {"duration": 1.0, "texture": SubResource("Monster_3")}, {"duration": 1.0, "texture": SubResource("Monster_4")}, {"duration": 1.0, "texture": SubResource("Monster_5")}, {"duration": 1.0, "texture": SubResource("Monster_6")}, {"duration": 1.0, "texture": SubResource("Monster_7")}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
 
 [node name="Enemy" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 5
 script = ExtResource("1")
 
-[node name="EnemySprite" type="Sprite2D" parent="."]
+[node name="EnemySprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-texture = SubResource("AtlasTexture_enemy")
-scale = Vector2(1.55, 1.55)
+position = Vector2(0, -7)
+sprite_frames = SubResource("SpriteFrames_monster")
+animation = &"walk"
+autoplay = "walk"
+scale = Vector2(0.135, 0.135)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_enemy")

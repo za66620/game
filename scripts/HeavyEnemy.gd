@@ -15,7 +15,7 @@ var start_x: float
 var dead := false
 var stun_timer := 0.0
 var facing := -1
-var health := 5
+var health := 120
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player")
 @onready var heavy_sprite: Sprite2D = $HeavySprite
@@ -64,11 +64,7 @@ func _try_charge() -> void:
 		heavy_sprite.modulate = Color(1.0, 0.45, 0.45)
 
 func stomp() -> void:
-	if state == State.STUNNED:
-		dead = true
-		queue_free()
-	elif player:
-		player._die()
+	hit(36 if state == State.STUNNED else 12)
 
 func hit(dmg: int) -> void:
 	health -= dmg

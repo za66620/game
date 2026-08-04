@@ -1,0 +1,92 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/Boss.gd" id="1_boss"]
+[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/Bosses.png" id="2_bosses"]
+[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/batedor_walk.png" id="3_warden"]
+[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/dragon.png" id="4_dragon"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
+size = Vector2(86, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_snail"]
+atlas = ExtResource("2_bosses")
+region = Rect2(0, 0, 64, 55)
+
+[sub_resource type="AtlasTexture" id="Atlas_dragon"]
+atlas = ExtResource("4_dragon")
+region = Rect2(0, 0, 390, 525)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_0"]
+atlas = ExtResource("3_warden")
+region = Rect2(0, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_1"]
+atlas = ExtResource("3_warden")
+region = Rect2(320, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_2"]
+atlas = ExtResource("3_warden")
+region = Rect2(640, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_3"]
+atlas = ExtResource("3_warden")
+region = Rect2(960, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_4"]
+atlas = ExtResource("3_warden")
+region = Rect2(1280, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_5"]
+atlas = ExtResource("3_warden")
+region = Rect2(1600, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_6"]
+atlas = ExtResource("3_warden")
+region = Rect2(1920, 0, 320, 320)
+
+[sub_resource type="AtlasTexture" id="Atlas_warden_7"]
+atlas = ExtResource("3_warden")
+region = Rect2(2240, 0, 320, 320)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_warden"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Atlas_warden_0")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_1")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_2")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_3")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_4")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_5")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_6")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_7")}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="Boss" type="CharacterBody2D" groups=["boss", "enemies"]]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_boss")
+
+[node name="SnailSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -8)
+texture = SubResource("Atlas_snail")
+scale = Vector2(1.9, 1.9)
+
+[node name="WardenSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -18)
+sprite_frames = SubResource("SpriteFrames_warden")
+animation = &"walk"
+scale = Vector2(0.29, 0.29)
+
+[node name="DragonSprite" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -64)
+texture = SubResource("Atlas_dragon")
+scale = Vector2(0.37, 0.37)
+
+[node name="WarningArc" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(68, 10)
+polygon = PackedVector2Array(0, -40, 88, -24, 105, 4, 88, 30, 0, 42)
+color = Color(0.95, 0.12, 0.08, 0.42)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_boss")
