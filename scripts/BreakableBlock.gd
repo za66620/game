@@ -4,7 +4,7 @@ func _ready() -> void:
 	$Detector.body_entered.connect(_on_detector_entered)
 
 func _on_detector_entered(body: Node2D) -> void:
-	if body.is_in_group("player") and (body.is_pounding or body.is_dashing):
+	if body.is_in_group("player") and body.is_dashing:
 		_break()
 
 func shoot_hit() -> void:

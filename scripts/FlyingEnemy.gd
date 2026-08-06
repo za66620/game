@@ -20,17 +20,26 @@ func _physics_process(delta: float) -> void:
 
 func stomp() -> void:
 	dead = true
+	_die_effect()
 	queue_free()
 
 func pound() -> void:
 	stomp()
 
-func hit(dmg: int) -> void:
+func hit(dmg: int, _dir := Vector2.ZERO) -> void:
 	health -= dmg
+	GameFeel.hitstop(0.05)
+	GameFeel.burst(global_position, Color(0.8, 0.55, 0.95), 8)
 	_flash()
 	if health <= 0:
 		dead = true
+		_die_effect()
 		queue_free()
+
+func _die_effect() -> void:
+	GameFeel.hitstop(0.08)
+	GameFeel.shake(5.0, 0.18)
+	GameFeel.burst(global_position, Color(0.8, 0.55, 0.95), 14)
 
 func _flash() -> void:
 	modulate = Color(1.6, 1.6, 1.6)

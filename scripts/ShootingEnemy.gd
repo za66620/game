@@ -12,6 +12,7 @@ var direction := -1
 var start_x: float
 var dead := false
 var fire_timer := 1.0
+var knockback_velocity := Vector2.ZERO
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player")
 @onready var shooting_sprite: Sprite2D = $ShootingSprite
@@ -23,7 +24,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
-	velocity.x = direction * SPEED
+	if knockback_velocity.length() > 0.0:
+		velocity = knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+	else:
+		velocity.x = direction * SPEED
 	shooting_sprite.flip_h = direction > 0
 	move_and_slide()
 	if global_position.x <= start_x - patrol_range:
@@ -47,17 +52,28 @@ func _shoot(dir: float) -> void:
 
 func stomp() -> void:
 	dead = true
+	_die_effect()
 	queue_free()
 
 func pound() -> void:
 	stomp()
 
-func hit(dmg: int) -> void:
+func hit(dmg: int, dir := Vector2.ZERO) -> void:
 	health -= dmg
+	if dir != Vector2.ZERO:
+		knockback_velocity = dir * 260.0
+	GameFeel.hitstop(0.05)
+	GameFeel.burst(global_position, Color(1.0, 0.7, 0.3), 8)
 	_flash()
 	if health <= 0:
 		dead = true
+		_die_effect()
 		queue_free()
+
+func _die_effect() -> void:
+	GameFeel.hitstop(0.08)
+	GameFeel.shake(5.0, 0.18)
+	GameFeel.burst(global_position, Color(1.0, 0.7, 0.3), 14)
 
 func _flash() -> void:
 	modulate = Color(1.6, 1.6, 1.6)

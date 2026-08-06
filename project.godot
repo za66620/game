@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 InputSetup="*res://scripts/InputSetup.gd"
 AudioManager="*res://scripts/AudioManager.gd"
+GameFeel="*res://scripts/GameFeel.gd"
 
 [display]
 
