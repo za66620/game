@@ -1,9 +1,10 @@
 extends Node2D
 
 @export_range(1, 3) var level_id := 1
+@export var boss_defeated := false
 
 const COIN_SCENE := preload("res://scenes/Coin.tscn")
-const GOAL_SCENE := preload("res://scenes/Goal.tscn")
+const PORTAL_SCENE := preload("res://scenes/LevelPortal.tscn")
 const CHECKPOINT_SCENE := preload("res://scenes/Checkpoint.tscn")
 const ENEMY_SCENE := preload("res://scenes/Enemy.tscn")
 const FLYING_ENEMY_SCENE := preload("res://scenes/FlyingEnemy.tscn")
@@ -128,18 +129,17 @@ func _add_title(text_value: String, pos: Vector2) -> void:
 	label.add_theme_constant_override("shadow_offset_y", 2)
 	decorations.add_child(label)
 
-func _add_boss_and_locked_goal(boss_pos: Vector2, goal_pos: Vector2, properties: Dictionary) -> void:
-	var boss := _spawn(BOSS_SCENE, boss_pos, enemies, properties)
-	var goal := _spawn(GOAL_SCENE, goal_pos, self) as Area2D
-	goal.monitoring = false
-	goal.modulate = Color(0.28, 0.28, 0.34, 0.72)
-	boss.defeated.connect(_unlock_goal.bind(goal))
-
-func _unlock_goal(goal: Area2D) -> void:
-	if not is_instance_valid(goal):
+func _add_boss_and_portal(boss_pos: Vector2, portal_pos: Vector2, properties: Dictionary) -> void:
+	var portal := _spawn(PORTAL_SCENE, portal_pos, self)
+	portal.set_active(boss_defeated)
+	if boss_defeated:
 		return
-	goal.monitoring = true
-	goal.modulate = Color.WHITE
+	var boss := _spawn(BOSS_SCENE, boss_pos, enemies, properties)
+	boss.defeated.connect(_open_portal.bind(portal))
+
+func _open_portal(portal: Area2D) -> void:
+	if is_instance_valid(portal):
+		portal.set_active(true)
 
 func _build_meadow() -> void:
 	_add_title("第一关 · 翠绿边境", Vector2(-1040, 420))
@@ -159,7 +159,7 @@ func _build_meadow() -> void:
 	_spawn(ENEMY_SCENE, Vector2(520, 565), enemies, {"patrol_range": 110.0})
 	_spawn(FLYING_ENEMY_SCENE, Vector2(210, 350), enemies, {"bob_range": 34.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(380, 392), self)
-	_add_boss_and_locked_goal(Vector2(800, 545), Vector2(930, 301), {
+	_add_boss_and_portal(Vector2(800, 545), Vector2(930, 301), {
 		"boss_name": "铁壳投石者",
 		"variant": 0,
 		"max_health": 140,
@@ -193,7 +193,7 @@ func _build_ruins() -> void:
 	_spawn(FLYING_ENEMY_SCENE, Vector2(230, 255), enemies, {"bob_range": 45.0})
 	_spawn(ENEMY_SCENE, Vector2(780, 370), enemies, {"patrol_range": 80.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(410, 248), self)
-	_add_boss_and_locked_goal(Vector2(1080, 545), Vector2(1120, 261), {
+	_add_boss_and_portal(Vector2(1080, 545), Vector2(1120, 261), {
 		"boss_name": "赤刃守卫",
 		"variant": 1,
 		"max_health": 180,
@@ -230,7 +230,7 @@ func _build_fortress() -> void:
 	_spawn(SHOOTING_ENEMY_SCENE, Vector2(1030, 398), enemies, {"patrol_range": 80.0, "fire_interval": 1.8})
 	_spawn(HEAVY_ENEMY_SCENE, Vector2(1220, 562), enemies, {"patrol_range": 130.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(650, 292), self)
-	_add_boss_and_locked_goal(Vector2(1370, 545), Vector2(1410, 250), {
+	_add_boss_and_portal(Vector2(1370, 545), Vector2(1410, 250), {
 		"boss_name": "深渊龙兽",
 		"variant": 2,
 		"max_health": 230,

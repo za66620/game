@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/Boss.gd" id="1_boss"]
 [ext_resource type="Texture2D" path="res://assets/external/soul_monsters/Bosses.png" id="2_bosses"]
@@ -6,7 +6,10 @@
 [ext_resource type="Texture2D" path="res://assets/external/soul_monsters/dragon.png" id="4_dragon"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
-size = Vector2(86, 64)
+size = Vector2(68, 54)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_melee"]
+size = Vector2(104, 58)
 
 [sub_resource type="AtlasTexture" id="Atlas_snail"]
 atlas = ExtResource("2_bosses")
@@ -58,35 +61,47 @@ animations = [{
 
 [node name="Boss" type="CharacterBody2D" groups=["boss", "enemies"]]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 1
 script = ExtResource("1_boss")
 
 [node name="SnailSprite" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(0, -8)
 texture = SubResource("Atlas_snail")
-scale = Vector2(1.9, 1.9)
+scale = Vector2(1.5, 1.5)
 
 [node name="WardenSprite" type="AnimatedSprite2D" parent="."]
 visible = false
 texture_filter = 1
-position = Vector2(0, -18)
+position = Vector2(0, -14)
 sprite_frames = SubResource("SpriteFrames_warden")
 animation = &"walk"
-scale = Vector2(0.29, 0.29)
+scale = Vector2(0.235, 0.235)
 
 [node name="DragonSprite" type="Sprite2D" parent="."]
 visible = false
 texture_filter = 1
-position = Vector2(0, -64)
+position = Vector2(0, -48)
 texture = SubResource("Atlas_dragon")
-scale = Vector2(0.37, 0.37)
+scale = Vector2(0.27, 0.27)
 
 [node name="WarningArc" type="Polygon2D" parent="."]
 visible = false
-position = Vector2(68, 10)
-polygon = PackedVector2Array(0, -40, 88, -24, 105, 4, 88, 30, 0, 42)
+position = Vector2(56, 5)
+polygon = PackedVector2Array(0, -31, 70, -19, 84, 3, 70, 24, 0, 33)
 color = Color(0.95, 0.12, 0.08, 0.42)
+
+[node name="MeleeHitbox" type="Area2D" parent="."]
+position = Vector2(-55, 0)
+collision_layer = 0
+collision_mask = 4
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox"]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_melee")
+disabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_boss")

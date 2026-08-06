@@ -66,7 +66,7 @@ func _try_charge() -> void:
 func stomp() -> void:
 	hit(36 if state == State.STUNNED else 12)
 
-func hit(dmg: int) -> void:
+func hit(dmg: int, _direction := Vector2.ZERO) -> void:
 	health -= dmg
 	_flash()
 	if health <= 0:

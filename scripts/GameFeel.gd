@@ -45,8 +45,11 @@ func _process(_delta: float) -> void:
 		if _camera:
 			var decay := _shake_left / _shake_duration if _shake_duration > 0.0 else 0.0
 			_camera.offset = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * _shake_intensity * decay
-	elif _camera and is_instance_valid(_camera) and _camera.offset != Vector2.ZERO:
-		_camera.offset = Vector2.ZERO
+	elif _camera and is_instance_valid(_camera):
+		if _camera.offset != Vector2.ZERO:
+			_camera.offset = Vector2.ZERO
+		_shake_intensity = 0.0
+		_shake_duration = 0.0
 
 	if _flash_left > 0.0:
 		_flash_left = maxf(0.0, _flash_left - real_delta)

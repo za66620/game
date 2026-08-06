@@ -15,9 +15,11 @@ var current_level := 0
 var total_souls := 0
 var won := false
 var respawning := false
+var transitioning := false
 var checkpoint_pos := Vector2.ZERO
 var has_checkpoint := false
 var current_boss: Node = null
+var defeated_bosses: Dictionary = {}
 
 @onready var player: CharacterBody2D = $Player
 @onready var souls_label: Label = $HUD/PlayerStatus/SoulsLabel
@@ -39,7 +41,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("restart"):
 		get_tree().reload_current_scene()
-	if not won and not respawning and player.global_position.y > 1200.0:
+	if not won and not respawning and not transitioning and player.global_position.y > 1200.0:
 		player._die()
 
 func _load_level(index: int) -> void:
@@ -51,13 +53,13 @@ func _load_level(index: int) -> void:
 	await get_tree().process_frame
 
 	var level := (load(LEVELS[index]) as PackedScene).instantiate()
+	level.set("boss_defeated", defeated_bosses.has(index))
 	level_container.add_child(level)
 
 	for soul in get_tree().get_nodes_in_group("coins"):
 		soul.collected.connect(_on_soul_collected)
-	var goal: Node = get_tree().get_first_node_in_group("goal")
-	if goal:
-		goal.reached.connect(_on_goal_reached)
+	for portal in get_tree().get_nodes_in_group("level_portal"):
+		portal.entered.connect(_on_portal_entered)
 
 	has_checkpoint = false
 	for checkpoint in get_tree().get_nodes_in_group("checkpoints"):
@@ -84,18 +86,25 @@ func _on_soul_collected(_soul: Area2D) -> void:
 	AudioManager.play("coin")
 	_update_hud()
 
-func _on_goal_reached() -> void:
-	if respawning or won:
+func _on_portal_entered() -> void:
+	if respawning or transitioning or won:
 		return
+	transitioning = true
 	AudioManager.play("win")
+	player.set_process(false)
+	player.set_physics_process(false)
+	GameFeel.fade_out(0.25)
+	await get_tree().create_timer(0.3).timeout
 	if current_level < LEVELS.size() - 1:
 		current_level += 1
-		_load_level(current_level)
+		await _load_level(current_level)
+		GameFeel.fade_in(0.35)
+		transitioning = false
 	else:
 		won = true
 		boss_panel.visible = false
+		GameFeel.fade_in(0.35)
 		message_label.text = "薪火尚存——你已完成试炼！按 R 重新开始"
-		_freeze_player()
 
 func _on_checkpoint_activated(pos: Vector2) -> void:
 	checkpoint_pos = pos
@@ -140,10 +149,13 @@ func _on_boss_health_changed(current: int, maximum: int) -> void:
 	boss_health_bar.value = current
 
 func _on_boss_defeated() -> void:
+	if defeated_bosses.has(current_level):
+		return
+	defeated_bosses[current_level] = true
 	total_souls += 100 * (current_level + 1)
 	_update_hud()
 	boss_panel.visible = false
-	message_label.text = "强敌已消灭——封印解除"
+	message_label.text = "强敌已消灭——传送门已经开启"
 	await get_tree().create_timer(1.8).timeout
 	if not respawning and not won:
 		message_label.text = ""

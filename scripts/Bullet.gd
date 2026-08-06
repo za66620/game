@@ -14,6 +14,8 @@ func _on_body_entered(body: Node2D) -> void:
 	if body == shooter or body is Area2D:
 		return
 	if body.is_in_group("player"):
+		if body.has_method("is_dodge_invulnerable") and body.is_dodge_invulnerable():
+			return
 		if body.has_method("take_damage"):
 			body.take_damage(damage, global_position, shooter)
 		elif body.has_method("_die"):

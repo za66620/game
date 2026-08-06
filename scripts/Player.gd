@@ -24,16 +24,13 @@ const DASH_SPEED := 610.0
 const DASH_TIME := 0.23
 const DASH_COOLDOWN := 0.18
 const DASH_STAMINA := 32.0
-const NORMAL_COLLISION_MASK := 3
+const NORMAL_COLLISION_MASK := 1
 const DASH_COLLISION_MASK := 1
 
 const PARRY_WINDOW := 0.17
 const GUARD_STAMINA_MULTIPLIER := 1.35
 const GUARD_BREAK_TIME := 0.72
 const HURT_INVULN_TIME := 0.62
-
-const POUND_VELOCITY := 1000.0
-const POUND_BOUNCE := -300.0
 
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var health := MAX_HEALTH
@@ -42,7 +39,6 @@ var dead := false
 var facing := 1
 var attacking := false
 var is_dashing := false
-var is_pounding := false
 var blocking := false
 
 var attack_time_left := 0.0
@@ -94,10 +90,6 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("attack"):
 		_start_attack()
 
-	if Input.is_action_just_pressed("down") and not is_on_floor() and not is_dashing and not is_pounding and not attacking:
-		is_pounding = true
-		velocity.y = POUND_VELOCITY
-
 	var dash_combo_pressed := direction != 0.0 and Input.is_action_pressed("dash") and (
 		Input.is_action_just_pressed("dash")
 		or Input.is_action_just_pressed("left")
@@ -116,12 +108,12 @@ func _physics_process(delta: float) -> void:
 			_update_visuals()
 			return
 
-	if not is_on_floor() and not is_pounding:
+	if not is_on_floor():
 		velocity.y += gravity * delta
 
 	var jump_consumed := false
 	wall_dir = 0
-	if is_on_wall() and not is_on_floor() and not is_pounding and not attacking:
+	if is_on_wall() and not is_on_floor() and not attacking:
 		wall_dir = signi(int(round(get_wall_normal().x)))
 		if Input.is_action_just_pressed("jump"):
 			velocity.x = wall_dir * WALL_JUMP_VELOCITY_X
@@ -131,13 +123,11 @@ func _physics_process(delta: float) -> void:
 		elif Input.get_axis("left", "right") == -wall_dir:
 			velocity.y = minf(velocity.y, WALL_SLIDE_SPEED)
 
-	if not is_pounding and not jump_consumed and not blocking and not attacking and Input.is_action_just_pressed("jump") and is_on_floor():
+	if not jump_consumed and not blocking and not attacking and Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		AudioManager.play("jump")
 
-	if is_pounding:
-		velocity.y = POUND_VELOCITY
-	elif blocking:
+	if blocking:
 		velocity.x = move_toward(velocity.x, 0.0, SPEED)
 	elif attacking:
 		velocity.x = direction * SPEED * 0.22
@@ -150,12 +140,6 @@ func _physics_process(delta: float) -> void:
 	if blocking and not is_on_floor():
 		blocking = false
 	_check_enemy_contacts()
-
-	if is_pounding and is_on_floor():
-		_pound_shockwave()
-		velocity.y = POUND_BOUNCE
-		is_pounding = false
-		AudioManager.play("stomp")
 
 	_check_hazards()
 	_update_visuals()
@@ -218,7 +202,7 @@ func _update_attack(delta: float) -> void:
 		knight_sprite.position.y = 0.0
 
 func _begin_dash(dash_direction: int) -> void:
-	if dead or is_dashing or attacking or blocking or is_pounding or stagger_left > 0.0 or dash_cooldown_left > 0.0:
+	if dead or is_dashing or attacking or blocking or stagger_left > 0.0 or dash_cooldown_left > 0.0:
 		return
 	if not _spend_stamina(DASH_STAMINA):
 		return
@@ -233,6 +217,9 @@ func _begin_dash(dash_direction: int) -> void:
 func _end_dash() -> void:
 	is_dashing = false
 	collision_mask = NORMAL_COLLISION_MASK
+
+func is_dodge_invulnerable() -> bool:
+	return is_dashing
 
 func block_hit(source_position: Vector2, damage := 20, attacker: Node = null) -> bool:
 	if dead or is_dashing:
@@ -274,9 +261,13 @@ func _apply_damage(damage: int, source_position: Vector2) -> void:
 	stamina_regen_delay_left = STAMINA_REGEN_DELAY
 	if source_position != Vector2.ZERO:
 		var knock_dir := -1.0 if source_position.x > global_position.x else 1.0
-		velocity = Vector2(knock_dir * 230.0, -190.0)
+		var source_is_below := source_position.y > global_position.y + 8.0 and velocity.y > 0.0
+		velocity = Vector2(knock_dir * 230.0, 35.0 if source_is_below else -170.0)
 	health_changed.emit(health, MAX_HEALTH)
 	modulate = Color(1.0, 0.45, 0.45)
+	GameFeel.shake(4.0, 0.14)
+	GameFeel.burst(global_position, Color(0.95, 0.25, 0.2), 9)
+	GameFeel.flash_red()
 	get_tree().create_timer(0.12).timeout.connect(_reset_hurt_flash)
 	if health <= 0:
 		_die()
@@ -303,7 +294,8 @@ func _on_attack_body_entered(body: Node2D) -> void:
 	if attack_hits.has(body_id):
 		return
 	attack_hits[body_id] = true
-	body.hit(ATTACK_DAMAGE)
+	var hit_direction := Vector2(float(facing), -0.12).normalized()
+	body.hit(ATTACK_DAMAGE, hit_direction)
 
 func _check_enemy_contacts() -> void:
 	if is_dashing or dead:
@@ -314,9 +306,6 @@ func _check_enemy_contacts() -> void:
 		if attacking:
 			_on_attack_body_entered(body)
 			continue
-		if velocity.y > 0.0 and global_position.y < body.global_position.y - 8.0:
-			_stomp(body)
-			return
 		if block_hit(body.global_position, 24, body):
 			continue
 		take_damage(24, body.global_position, body)
@@ -329,17 +318,6 @@ func _check_hazards() -> void:
 		var collider: Object = get_slide_collision(i).get_collider()
 		if collider is Node2D and collider.is_in_group("spikes"):
 			_die()
-
-func _pound_shockwave() -> void:
-	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.has_method("pound") and global_position.distance_to(enemy.global_position) < 150.0:
-			enemy.pound()
-
-func _stomp(enemy: Node2D) -> void:
-	velocity.y = JUMP_VELOCITY * 0.55
-	AudioManager.play("stomp")
-	if enemy.has_method("stomp"):
-		enemy.stomp()
 
 func _update_visuals() -> void:
 	knight_sprite.flip_h = facing < 0
@@ -382,7 +360,6 @@ func _update_visuals() -> void:
 func launch(vy: float) -> void:
 	if dead:
 		return
-	is_pounding = false
 	velocity.y = vy
 
 func teleport_to(pos: Vector2) -> bool:
@@ -391,7 +368,6 @@ func teleport_to(pos: Vector2) -> bool:
 	teleport_lock = 0.5
 	global_position = pos
 	velocity = Vector2.ZERO
-	is_pounding = false
 	_end_dash()
 	return true
 
@@ -407,7 +383,6 @@ func _die() -> void:
 	dead = true
 	health = 0
 	health_changed.emit(health, MAX_HEALTH)
-	is_pounding = false
 	_end_dash()
 	blocking = false
 	attacking = false
@@ -420,7 +395,6 @@ func reset_for_spawn() -> void:
 	dead = false
 	health = MAX_HEALTH
 	stamina = MAX_STAMINA
-	is_pounding = false
 	attacking = false
 	blocking = false
 	stagger_left = 0.0
