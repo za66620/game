@@ -160,11 +160,11 @@ func _build_meadow() -> void:
 	_spawn(FLYING_ENEMY_SCENE, Vector2(210, 350), enemies, {"bob_range": 34.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(380, 392), self)
 	_add_boss_and_portal(Vector2(800, 545), Vector2(930, 301), {
-		"boss_name": "铁壳投石者",
+		"boss_name": "腐化骑士",
 		"variant": 0,
-		"max_health": 140,
-		"move_speed": 72.0,
-		"attack_damage": 28,
+		"max_health": 150,
+		"move_speed": 82.0,
+		"attack_damage": 26,
 		"arena_half_width": 190.0,
 	})
 	_add_decoration(Vector2(-850, 562), PLANT_TILE)
@@ -194,11 +194,11 @@ func _build_ruins() -> void:
 	_spawn(ENEMY_SCENE, Vector2(780, 370), enemies, {"patrol_range": 80.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(410, 248), self)
 	_add_boss_and_portal(Vector2(1080, 545), Vector2(1120, 261), {
-		"boss_name": "赤刃守卫",
+		"boss_name": "狼裔猎杀者",
 		"variant": 1,
-		"max_health": 180,
-		"move_speed": 112.0,
-		"attack_damage": 32,
+		"max_health": 190,
+		"move_speed": 128.0,
+		"attack_damage": 30,
 		"arena_half_width": 250.0,
 	})
 	_add_decoration(Vector2(-1220, 562), CACTUS_TILE)
@@ -231,11 +231,11 @@ func _build_fortress() -> void:
 	_spawn(HEAVY_ENEMY_SCENE, Vector2(1220, 562), enemies, {"patrol_range": 130.0})
 	_spawn(CHECKPOINT_SCENE, Vector2(650, 292), self)
 	_add_boss_and_portal(Vector2(1370, 545), Vector2(1410, 250), {
-		"boss_name": "深渊龙兽",
+		"boss_name": "深渊冠军",
 		"variant": 2,
-		"max_health": 230,
-		"move_speed": 92.0,
-		"attack_damage": 38,
+		"max_health": 240,
+		"move_speed": 102.0,
+		"attack_damage": 36,
 		"arena_half_width": 260.0,
 	})
 	_add_decoration(Vector2(-1450, 562), PLANT_TILE)

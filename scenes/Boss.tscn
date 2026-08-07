@@ -1,62 +1,125 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/Boss.gd" id="1_boss"]
-[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/Bosses.png" id="2_bosses"]
-[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/batedor_walk.png" id="3_warden"]
-[ext_resource type="Texture2D" path="res://assets/external/soul_monsters/dragon.png" id="4_dragon"]
+[ext_resource type="Texture2D" path="res://assets/bosses/corrupted_knight.png" id="2_corrupted"]
+[ext_resource type="Texture2D" path="res://assets/bosses/beast_hunter.png" id="3_beast"]
+[ext_resource type="Texture2D" path="res://assets/bosses/abyss_champion.png" id="4_abyss"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
-size = Vector2(68, 54)
+size = Vector2(42, 66)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_melee"]
-size = Vector2(104, 58)
+size = Vector2(92, 54)
 
-[sub_resource type="AtlasTexture" id="Atlas_snail"]
-atlas = ExtResource("2_bosses")
-region = Rect2(0, 0, 64, 55)
+[sub_resource type="AtlasTexture" id="Corrupted_walk_0"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(0, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_dragon"]
-atlas = ExtResource("4_dragon")
-region = Rect2(0, 0, 390, 525)
+[sub_resource type="AtlasTexture" id="Corrupted_walk_1"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(256, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_warden_0"]
-atlas = ExtResource("3_warden")
-region = Rect2(0, 0, 320, 320)
+[sub_resource type="AtlasTexture" id="Corrupted_walk_2"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(512, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_warden_1"]
-atlas = ExtResource("3_warden")
-region = Rect2(320, 0, 320, 320)
+[sub_resource type="AtlasTexture" id="Corrupted_attack_0"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(768, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_warden_2"]
-atlas = ExtResource("3_warden")
-region = Rect2(640, 0, 320, 320)
+[sub_resource type="AtlasTexture" id="Corrupted_attack_1"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(1024, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_warden_3"]
-atlas = ExtResource("3_warden")
-region = Rect2(960, 0, 320, 320)
+[sub_resource type="AtlasTexture" id="Corrupted_attack_2"]
+atlas = ExtResource("2_corrupted")
+region = Rect2(1280, 512, 256, 256)
 
-[sub_resource type="AtlasTexture" id="Atlas_warden_4"]
-atlas = ExtResource("3_warden")
-region = Rect2(1280, 0, 320, 320)
-
-[sub_resource type="AtlasTexture" id="Atlas_warden_5"]
-atlas = ExtResource("3_warden")
-region = Rect2(1600, 0, 320, 320)
-
-[sub_resource type="AtlasTexture" id="Atlas_warden_6"]
-atlas = ExtResource("3_warden")
-region = Rect2(1920, 0, 320, 320)
-
-[sub_resource type="AtlasTexture" id="Atlas_warden_7"]
-atlas = ExtResource("3_warden")
-region = Rect2(2240, 0, 320, 320)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_warden"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_corrupted"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("Atlas_warden_0")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_1")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_2")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_3")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_4")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_5")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_6")}, {"duration": 1.0, "texture": SubResource("Atlas_warden_7")}],
+"frames": [{"duration": 1.0, "texture": SubResource("Corrupted_walk_0")}, {"duration": 1.0, "texture": SubResource("Corrupted_walk_1")}, {"duration": 1.0, "texture": SubResource("Corrupted_walk_2")}],
 "loop": true,
 "name": &"walk",
+"speed": 6.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Corrupted_attack_0")}, {"duration": 1.0, "texture": SubResource("Corrupted_attack_1")}, {"duration": 1.0, "texture": SubResource("Corrupted_attack_2")}],
+"loop": false,
+"name": &"attack",
 "speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="Beast_walk_0"]
+atlas = ExtResource("3_beast")
+region = Rect2(0, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Beast_walk_1"]
+atlas = ExtResource("3_beast")
+region = Rect2(256, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Beast_walk_2"]
+atlas = ExtResource("3_beast")
+region = Rect2(512, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Beast_attack_0"]
+atlas = ExtResource("3_beast")
+region = Rect2(768, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Beast_attack_1"]
+atlas = ExtResource("3_beast")
+region = Rect2(1024, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Beast_attack_2"]
+atlas = ExtResource("3_beast")
+region = Rect2(1280, 512, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_beast"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Beast_walk_0")}, {"duration": 1.0, "texture": SubResource("Beast_walk_1")}, {"duration": 1.0, "texture": SubResource("Beast_walk_2")}],
+"loop": true,
+"name": &"walk",
+"speed": 7.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Beast_attack_0")}, {"duration": 1.0, "texture": SubResource("Beast_attack_1")}, {"duration": 1.0, "texture": SubResource("Beast_attack_2")}],
+"loop": false,
+"name": &"attack",
+"speed": 9.0
+}]
+
+[sub_resource type="AtlasTexture" id="Abyss_walk_0"]
+atlas = ExtResource("4_abyss")
+region = Rect2(0, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Abyss_walk_1"]
+atlas = ExtResource("4_abyss")
+region = Rect2(256, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Abyss_walk_2"]
+atlas = ExtResource("4_abyss")
+region = Rect2(512, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Abyss_attack_0"]
+atlas = ExtResource("4_abyss")
+region = Rect2(768, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Abyss_attack_1"]
+atlas = ExtResource("4_abyss")
+region = Rect2(1024, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="Abyss_attack_2"]
+atlas = ExtResource("4_abyss")
+region = Rect2(1280, 512, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_abyss"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Abyss_walk_0")}, {"duration": 1.0, "texture": SubResource("Abyss_walk_1")}, {"duration": 1.0, "texture": SubResource("Abyss_walk_2")}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Abyss_attack_0")}, {"duration": 1.0, "texture": SubResource("Abyss_attack_1")}, {"duration": 1.0, "texture": SubResource("Abyss_attack_2")}],
+"loop": false,
+"name": &"attack",
+"speed": 7.0
 }]
 
 [node name="Boss" type="CharacterBody2D" groups=["boss", "enemies"]]
@@ -64,44 +127,47 @@ collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_boss")
 
-[node name="SnailSprite" type="Sprite2D" parent="."]
+[node name="CorruptedKnight" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-position = Vector2(0, -8)
-texture = SubResource("Atlas_snail")
-scale = Vector2(1.5, 1.5)
-
-[node name="WardenSprite" type="AnimatedSprite2D" parent="."]
-visible = false
-texture_filter = 1
-position = Vector2(0, -14)
-sprite_frames = SubResource("SpriteFrames_warden")
+position = Vector2(0, -31)
+sprite_frames = SubResource("SpriteFrames_corrupted")
 animation = &"walk"
-scale = Vector2(0.235, 0.235)
+scale = Vector2(0.35, 0.35)
 
-[node name="DragonSprite" type="Sprite2D" parent="."]
+[node name="BeastHunter" type="AnimatedSprite2D" parent="."]
 visible = false
 texture_filter = 1
-position = Vector2(0, -48)
-texture = SubResource("Atlas_dragon")
-scale = Vector2(0.27, 0.27)
+position = Vector2(0, -35)
+sprite_frames = SubResource("SpriteFrames_beast")
+animation = &"walk"
+scale = Vector2(0.4, 0.4)
+
+[node name="AbyssChampion" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -41)
+sprite_frames = SubResource("SpriteFrames_abyss")
+animation = &"walk"
+scale = Vector2(0.45, 0.45)
 
 [node name="WarningArc" type="Polygon2D" parent="."]
 visible = false
-position = Vector2(56, 5)
-polygon = PackedVector2Array(0, -31, 70, -19, 84, 3, 70, 24, 0, 33)
+position = Vector2(54, -4)
+polygon = PackedVector2Array(0, -30, 68, -20, 85, 2, 68, 24, 0, 32)
 color = Color(0.95, 0.12, 0.08, 0.42)
 
 [node name="MeleeHitbox" type="Area2D" parent="."]
-position = Vector2(-55, 0)
+position = Vector2(-52, 0)
 collision_layer = 0
 collision_mask = 4
 monitoring = true
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox"]
-position = Vector2(0, -3)
+position = Vector2(0, -5)
 shape = SubResource("RectangleShape2D_melee")
 disabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_boss")

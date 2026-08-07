@@ -11,26 +11,30 @@ const WALL_JUMP_VELOCITY_X := 400.0
 
 const MAX_HEALTH := 100
 const MAX_STAMINA := 100.0
-const STAMINA_REGEN := 34.0
-const STAMINA_REGEN_DELAY := 0.78
+const STAMINA_REGEN := 38.0
+const STAMINA_REGEN_DELAY := 0.68
 
 const ATTACK_DAMAGE := 24
-const ATTACK_STAMINA := 24.0
-const ATTACK_TIME := 0.44
-const ATTACK_ACTIVE_FROM := 0.28
-const ATTACK_ACTIVE_UNTIL := 0.1
+const ATTACK_STAMINA := 22.0
+const ATTACK_TIME := 0.42
+const ATTACK_ACTIVE_FROM := 0.25
+const ATTACK_ACTIVE_UNTIL := 0.09
+const ATTACK_BUFFER_TIME := 0.14
 
-const DASH_SPEED := 610.0
-const DASH_TIME := 0.23
-const DASH_COOLDOWN := 0.18
-const DASH_STAMINA := 32.0
+const DASH_SPEED := 630.0
+const DASH_END_SPEED := 250.0
+const DASH_TIME := 0.27
+const DASH_INVULN_TIME := 0.16
+const DASH_COOLDOWN := 0.16
+const DASH_STAMINA := 27.0
+const DASH_BUFFER_TIME := 0.15
+const DASH_GHOST_INTERVAL := 0.045
 const NORMAL_COLLISION_MASK := 1
-const DASH_COLLISION_MASK := 1
 
 const PARRY_WINDOW := 0.17
 const GUARD_STAMINA_MULTIPLIER := 1.35
 const GUARD_BREAK_TIME := 0.72
-const HURT_INVULN_TIME := 0.62
+const HURT_INVULN_TIME := 0.58
 
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var health := MAX_HEALTH
@@ -42,8 +46,13 @@ var is_dashing := false
 var blocking := false
 
 var attack_time_left := 0.0
+var attack_buffer_left := 0.0
 var dash_time_left := 0.0
+var dash_invuln_left := 0.0
 var dash_cooldown_left := 0.0
+var dash_buffer_left := 0.0
+var dash_ghost_left := 0.0
+var perfect_dodge_used := false
 var stamina_regen_delay_left := 0.0
 var hurt_invuln_left := 0.0
 var stagger_left := 0.0
@@ -68,12 +77,18 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
+
+	if Input.is_action_just_pressed("attack"):
+		attack_buffer_left = ATTACK_BUFFER_TIME
+	if Input.is_action_just_pressed("dash"):
+		dash_buffer_left = DASH_BUFFER_TIME
+
 	_update_timers(delta)
 	_update_stamina(delta)
 	_update_attack(delta)
 
 	var direction := Input.get_axis("left", "right")
-	if direction != 0.0:
+	if direction != 0.0 and not is_dashing:
 		facing = 1 if direction > 0.0 else -1
 
 	if stagger_left > 0.0:
@@ -86,27 +101,11 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_update_block_state()
-
-	if Input.is_action_just_pressed("attack"):
-		_start_attack()
-
-	var dash_combo_pressed := direction != 0.0 and Input.is_action_pressed("dash") and (
-		Input.is_action_just_pressed("dash")
-		or Input.is_action_just_pressed("left")
-		or Input.is_action_just_pressed("right")
-	)
-	if dash_combo_pressed:
-		_begin_dash(1 if direction > 0.0 else -1)
+	_consume_action_buffers(direction)
 
 	if is_dashing:
-		dash_time_left -= delta
-		if dash_time_left <= 0.0:
-			_end_dash()
-		else:
-			velocity = Vector2(facing * DASH_SPEED, 0.0)
-			move_and_slide()
-			_update_visuals()
-			return
+		_update_dash(delta)
+		return
 
 	if not is_on_floor():
 		velocity.y += gravity * delta
@@ -128,9 +127,11 @@ func _physics_process(delta: float) -> void:
 		AudioManager.play("jump")
 
 	if blocking:
-		velocity.x = move_toward(velocity.x, 0.0, SPEED)
+		velocity.x = move_toward(velocity.x, 0.0, SPEED * delta * 10.0)
 	elif attacking:
-		velocity.x = direction * SPEED * 0.22
+		var active := attack_time_left <= ATTACK_ACTIVE_FROM and attack_time_left >= ATTACK_ACTIVE_UNTIL
+		var target_speed := float(facing) * 100.0 if active else 0.0
+		velocity.x = move_toward(velocity.x, target_speed, SPEED * delta * 8.0)
 	else:
 		velocity.x = direction * SPEED
 		if wall_dir != 0 and Input.get_axis("left", "right") == -wall_dir:
@@ -140,12 +141,14 @@ func _physics_process(delta: float) -> void:
 	if blocking and not is_on_floor():
 		blocking = false
 	_check_enemy_contacts()
-
 	_check_hazards()
 	_update_visuals()
 
 func _update_timers(delta: float) -> void:
 	dash_cooldown_left = maxf(0.0, dash_cooldown_left - delta)
+	dash_invuln_left = maxf(0.0, dash_invuln_left - delta)
+	dash_buffer_left = maxf(0.0, dash_buffer_left - delta)
+	attack_buffer_left = maxf(0.0, attack_buffer_left - delta)
 	teleport_lock = maxf(0.0, teleport_lock - delta)
 	hurt_invuln_left = maxf(0.0, hurt_invuln_left - delta)
 	stagger_left = maxf(0.0, stagger_left - delta)
@@ -167,6 +170,17 @@ func _spend_stamina(amount: float) -> bool:
 	stamina_changed.emit(stamina, MAX_STAMINA)
 	return true
 
+func _consume_action_buffers(direction: float) -> void:
+	if dash_buffer_left > 0.0:
+		var dash_direction := facing
+		if direction != 0.0:
+			dash_direction = 1 if direction > 0.0 else -1
+		if _begin_dash(dash_direction):
+			dash_buffer_left = 0.0
+			return
+	if attack_buffer_left > 0.0 and _start_attack():
+		attack_buffer_left = 0.0
+
 func _update_block_state() -> void:
 	var wants_block := Input.is_action_pressed("down") and is_on_floor() and not attacking and not is_dashing and stagger_left <= 0.0
 	if wants_block and not blocking and stamina > 0.0:
@@ -175,11 +189,11 @@ func _update_block_state() -> void:
 	elif not wants_block:
 		blocking = false
 
-func _start_attack() -> void:
+func _start_attack() -> bool:
 	if dead or attacking or is_dashing or blocking or stagger_left > 0.0:
-		return
+		return false
 	if not _spend_stamina(ATTACK_STAMINA):
-		return
+		return false
 	attacking = true
 	attack_time_left = ATTACK_TIME
 	attack_hits.clear()
@@ -187,6 +201,7 @@ func _start_attack() -> void:
 	knight_sprite.speed_scale = 1.0
 	knight_sprite.play(&"slash")
 	AudioManager.play("stomp")
+	return true
 
 func _update_attack(delta: float) -> void:
 	if not attacking:
@@ -201,29 +216,62 @@ func _update_attack(delta: float) -> void:
 		knight_sprite.frame = 0
 		knight_sprite.position.y = 0.0
 
-func _begin_dash(dash_direction: int) -> void:
+func _begin_dash(dash_direction: int) -> bool:
 	if dead or is_dashing or attacking or blocking or stagger_left > 0.0 or dash_cooldown_left > 0.0:
-		return
+		return false
 	if not _spend_stamina(DASH_STAMINA):
-		return
+		return false
 	facing = dash_direction
 	blocking = false
 	is_dashing = true
 	dash_time_left = DASH_TIME
-	dash_cooldown_left = DASH_COOLDOWN
-	collision_mask = DASH_COLLISION_MASK
+	dash_invuln_left = DASH_INVULN_TIME
+	dash_ghost_left = 0.0
+	perfect_dodge_used = false
 	AudioManager.play("stomp")
+	return true
+
+func _update_dash(delta: float) -> void:
+	dash_time_left -= delta
+	dash_ghost_left -= delta
+	if dash_ghost_left <= 0.0:
+		dash_ghost_left = DASH_GHOST_INTERVAL
+		GameFeel.ghost_trail(global_position + Vector2(0, -2), Color(0.38, 0.72, 1.0, 0.24), Vector2(38, 54))
+	if dash_time_left <= 0.0:
+		_end_dash()
+	else:
+		var progress := clampf(1.0 - dash_time_left / DASH_TIME, 0.0, 1.0)
+		var dash_speed := lerpf(DASH_SPEED, DASH_END_SPEED, progress * progress)
+		velocity = Vector2(facing * dash_speed, 0.0)
+		move_and_slide()
+		_update_visuals()
 
 func _end_dash() -> void:
+	if not is_dashing:
+		return
 	is_dashing = false
-	collision_mask = NORMAL_COLLISION_MASK
+	dash_invuln_left = 0.0
+	dash_cooldown_left = DASH_COOLDOWN
+	velocity.x = float(facing) * DASH_END_SPEED
 
 func is_dodge_invulnerable() -> bool:
-	return is_dashing
+	return is_dashing and dash_invuln_left > 0.0
+
+func perfect_dodge(attacker: Node = null) -> void:
+	if not is_dodge_invulnerable() or perfect_dodge_used:
+		return
+	perfect_dodge_used = true
+	stamina = minf(MAX_STAMINA, stamina + 18.0)
+	stamina_changed.emit(stamina, MAX_STAMINA)
+	GameFeel.slow_mo(0.34, 0.17)
+	GameFeel.shake(3.2, 0.13)
+	GameFeel.burst(global_position, Color(0.72, 0.9, 1.0), 14)
+	if attacker and attacker.has_method("on_perfect_dodged"):
+		attacker.on_perfect_dodged()
 
 func block_hit(source_position: Vector2, damage := 20, attacker: Node = null) -> bool:
-	if dead or is_dashing:
-		return is_dashing
+	if dead or is_dodge_invulnerable():
+		return is_dodge_invulnerable()
 	if not blocking or not _is_in_front(source_position):
 		return false
 	if parry_left > 0.0:
@@ -232,6 +280,8 @@ func block_hit(source_position: Vector2, damage := 20, attacker: Node = null) ->
 		if attacker and attacker.has_method("stagger"):
 			attacker.stagger()
 		_flash_shield(Color(1.8, 1.8, 0.7))
+		GameFeel.hitstop(0.065)
+		GameFeel.shake(3.0, 0.1)
 		AudioManager.play("stomp")
 		return true
 	var guard_cost := float(damage) * GUARD_STAMINA_MULTIPLIER
@@ -247,7 +297,7 @@ func block_hit(source_position: Vector2, damage := 20, attacker: Node = null) ->
 	return true
 
 func take_damage(damage: int, source_position := Vector2.ZERO, attacker: Node = null) -> void:
-	if dead or is_dashing or hurt_invuln_left > 0.0:
+	if dead or is_dodge_invulnerable() or hurt_invuln_left > 0.0:
 		return
 	if block_hit(source_position, damage, attacker):
 		return
@@ -262,9 +312,10 @@ func _apply_damage(damage: int, source_position: Vector2) -> void:
 	if source_position != Vector2.ZERO:
 		var knock_dir := -1.0 if source_position.x > global_position.x else 1.0
 		var source_is_below := source_position.y > global_position.y + 8.0 and velocity.y > 0.0
-		velocity = Vector2(knock_dir * 230.0, 35.0 if source_is_below else -170.0)
+		velocity = Vector2(knock_dir * 215.0, 35.0 if source_is_below else -155.0)
 	health_changed.emit(health, MAX_HEALTH)
 	modulate = Color(1.0, 0.45, 0.45)
+	GameFeel.hitstop(0.035)
 	GameFeel.shake(4.0, 0.14)
 	GameFeel.burst(global_position, Color(0.95, 0.25, 0.2), 9)
 	GameFeel.flash_red()
@@ -296,12 +347,16 @@ func _on_attack_body_entered(body: Node2D) -> void:
 	attack_hits[body_id] = true
 	var hit_direction := Vector2(float(facing), -0.12).normalized()
 	body.hit(ATTACK_DAMAGE, hit_direction)
+	GameFeel.shake(2.1, 0.08)
 
 func _check_enemy_contacts() -> void:
 	if is_dashing or dead:
 		return
 	for body in contact_sensor.get_overlapping_bodies():
 		if not body.is_in_group("enemies"):
+			continue
+		# Boss damage is driven only by its telegraphed melee hitbox.
+		if body.is_in_group("boss"):
 			continue
 		if attacking:
 			_on_attack_body_entered(body)
@@ -326,7 +381,7 @@ func _update_visuals() -> void:
 	shield_guard.position.x = facing * 28.0
 	shield_guard.scale = Vector2(0.8 * facing, 0.8)
 	knight_sprite.position.y = 9.0 if attacking else 0.0
-	knight_sprite.modulate = Color(0.62, 0.82, 1.0, 0.62) if is_dashing else Color.WHITE
+	knight_sprite.modulate = Color(0.62, 0.82, 1.0, 0.58) if is_dashing else Color.WHITE
 	if dead:
 		knight_sprite.animation = &"walk"
 		knight_sprite.pause()
@@ -340,7 +395,7 @@ func _update_visuals() -> void:
 		knight_sprite.animation = &"walk"
 	if is_dashing:
 		knight_sprite.play(&"walk")
-		knight_sprite.speed_scale = 2.8
+		knight_sprite.speed_scale = 3.1
 	elif blocking:
 		knight_sprite.pause()
 		knight_sprite.frame = 0
@@ -378,7 +433,7 @@ func heal_full() -> void:
 	stamina_changed.emit(stamina, MAX_STAMINA)
 
 func _die() -> void:
-	if dead or is_dashing:
+	if dead or is_dodge_invulnerable():
 		return
 	dead = true
 	health = 0
@@ -400,7 +455,10 @@ func reset_for_spawn() -> void:
 	stagger_left = 0.0
 	hurt_invuln_left = 0.0
 	parry_left = 0.0
-	_end_dash()
+	attack_buffer_left = 0.0
+	dash_buffer_left = 0.0
+	is_dashing = false
+	dash_invuln_left = 0.0
 	velocity = Vector2.ZERO
 	modulate = Color.WHITE
 	shield_guard.modulate = Color.WHITE
